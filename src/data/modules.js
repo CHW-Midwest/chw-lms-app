@@ -1,9 +1,8 @@
-
 /**
- * CHW MIDWEST MODULES (PROFESSIONAL CE VERSION)
- * - 5+ sentence Missouri case studies
- * - Non-repetitive reasoning-based questions
- * - CE-level complexity
+ * CHW MIDWEST LMS MODULE DATA
+ * - Missouri-specific case studies
+ * - 5+ sentences each
+ * - Complex, non-repetitive answer options
  */
 
 /**
@@ -11,7 +10,6 @@
  * MODULE 1: ADDICTION & MENTAL HEALTH
  * =========================
  */
-
 export const module1 = {
   title: "Addiction and Mental Health",
 
@@ -19,22 +17,129 @@ export const module1 = {
     {
       id: 1,
       text:
-        "A 36-year-old client in St. Louis lost employment due to company downsizing and has since experienced escalating alcohol use. They report disrupted sleep patterns, reduced appetite, and withdrawal from previously close family relationships. The client expresses shame and reluctance to seek formal treatment due to stigma in their community. Transportation barriers limit access to outpatient behavioral health services. Over the past four months, their housing situation has become unstable."
+        "A 36-year-old client in St. Louis recently lost their job after a manufacturing plant closure and has since increased alcohol consumption. They report difficulty sleeping, decreased appetite, and growing distance from family members. The client expresses feelings of hopelessness and embarrassment about their situation, which has prevented them from seeking help. Public transportation limitations make attending behavioral health appointments difficult. Over the past several months, their housing situation has become unstable, increasing overall stress levels."
     },
     {
       id: 2,
       text:
-        "A rural resident in southern Missouri began misusing prescription pain medication following a workplace injury. The nearest clinic offering medication-assisted treatment is over 50 miles away, requiring unreliable transportation. Family members report increasing behavioral changes including irritability and social withdrawal. The client has expressed ambivalence about stopping use due to unmanaged chronic pain. Local support groups are available but not regularly attended due to travel constraints."
+        "A rural Missouri resident began misusing prescription opioids after sustaining a workplace injury. The closest clinic offering medication-assisted treatment is over 50 miles away, requiring reliable transportation that the client does not have. Family members report mood changes, irritability, and increasing social withdrawal. The client remains hesitant to pursue treatment due to unmanaged chronic pain and fear of withdrawal symptoms. Community-based recovery resources exist but are not consistently accessed."
     },
     {
       id: 3,
       text:
-        "A 29-year-old pregnant client in Kansas City reports intermittent opioid use and inconsistent prenatal care. She recently relocated and lacks a stable support system or established healthcare provider. Fear of legal consequences prevents her from fully disclosing substance use during appointments. She reports increasing anxiety and difficulty maintaining daily routines. Housing instability has further complicated access to consistent care."
+        "A 29-year-old pregnant client in Kansas City reports intermittent opioid use and inconsistent prenatal care. She recently relocated and lacks a stable support system or established healthcare provider. Fear of legal or social consequences has prevented her from fully disclosing substance use during medical visits. She reports increased anxiety, difficulty maintaining routines, and periods of isolation. Housing instability further complicates her ability to access consistent care."
     },
     {
       id: 4,
       text:
-        "A middle-aged client recently released from incarceration in Missouri is attempting to reintegrate into the workforce. They report difficulty securing employment due to background checks and community stigma. The client has a history of alcohol use disorder and limited access to structured recovery programs. Emotional distress has increased due to isolation and lack of social support. They have not yet re-engaged with primary care or behavioral health services."
+        "A middle-aged individual returning to a rural Missouri community after incarceration reports difficulty securing employment due to background checks. They have a history of alcohol use disorder and limited access to structured recovery programs. The client experiences social isolation and ongoing stigma from community members. Access to behavioral health services is limited due to provider shortages in the area. Without stable employment or support, the client faces a high risk of relapse."
+    },
+    {
+      id: 5,
+      text:
+        "A 21-year-old college student in Columbia, Missouri reports worsening anxiety and increasing cannabis use to cope with academic stress. They have experienced difficulty accessing campus counseling services due to long wait times. Academic performance has declined, and the student has withdrawn from social activities. Sleep disruption and decreased concentration have intensified during exam periods. The student is unsure how to access additional support resources outside of campus services."
+    }
+  ],
+
+  questions: [
+    {
+      question:
+        "Which factor most strongly contributes to increased risk of substance misuse in underserved Missouri communities?",
+
+      correctAnswer:
+        "The combined impact of limited healthcare access, transportation barriers, and economic instability",
+
+      options: [
+        "The combined impact of limited healthcare access, transportation barriers, and economic instability",
+        "Short-term emotional reactions without environmental influence",
+        "Seasonal changes in employment unrelated to health outcomes",
+        "Individual lifestyle preferences independent of external factors"
+      ]
+    },
+    {
+      question:
+        "What is the most appropriate CHW approach when supporting clients with co-occurring mental health and substance use challenges?",
+
+      correctAnswer:
+        "Coordinating integrated care that addresses behavioral health needs alongside social and environmental barriers",
+
+      options: [
+        "Coordinating integrated care that addresses behavioral health needs alongside social and environmental barriers",
+        "Focusing only on symptom management without addressing external conditions",
+        "Encouraging self-directed recovery without structured support systems",
+        "Providing general health advice without connecting to resources"
+      ]
+    }
+  ]
+};
+
+/**
+ * =========================
+ * MODULE 2: FOOD DESERTS & NUTRITION
+ * =========================
+ */
+export const module2 = {
+  title: "Food Deserts and Nutrition",
+
+  caseStudies: [
+    {
+      id: 1,
+      text:
+        "A family living in rural Missouri reports that the nearest full-service grocery store is over 20 miles away. Due to transportation limitations, they rely primarily on convenience stores for food purchases. Fresh fruits and vegetables are rarely available in their immediate area. Children in the household consume mostly processed foods with limited nutritional value. The family is unaware of local food assistance programs that could help improve access."
+    },
+    {
+      id: 2,
+      text:
+        "An elderly resident in East St. Louis lives on a fixed income and has limited mobility due to chronic health conditions. After the closure of a nearby grocery store, access to fresh food has become significantly more difficult. The individual depends on occasional family assistance and limited delivery services. Meals on Wheels provides some support but does not fully meet nutritional needs. Over time, the client has experienced fatigue and unintended weight loss."
+    },
+    {
+      id: 3,
+      text:
+        "A single parent in Kansas City works multiple part-time jobs with inconsistent schedules. Due to time constraints, the household relies heavily on fast food and pre-packaged meals. Accessing nutrition education programs is difficult due to scheduling conflicts. Children in the household show early signs of dietary imbalance. The family has recently applied for SNAP benefits but has not yet received assistance."
+    },
+    {
+      id: 4,
+      text:
+        "A migrant worker community in Missouri experiences seasonal food insecurity, particularly during non-harvest months. Access to culturally familiar foods is limited in nearby stores. Community members often share resources, but supplies are inconsistent. Transportation to larger grocery stores is expensive and unreliable. Nutritional intake declines during certain periods of the year."
+    },
+    {
+      id: 5,
+      text:
+        "A suburban Missouri neighborhood recently lost its only full-service grocery store due to corporate restructuring. Residents now rely on convenience stores and gas stations for daily food purchases. Availability of fresh produce has decreased significantly. Community health workers have observed an increase in diet-related health concerns. Local organizations are beginning to explore solutions to improve food access."
+    }
+  ],
+
+  questions: [
+    {
+      question:
+        "What is the most accurate definition of a food desert in Missouri communities?",
+
+      correctAnswer:
+        "An area where geographic and economic barriers limit consistent access to affordable, nutritious food",
+
+      options: [
+        "An area where geographic and economic barriers limit consistent access to affordable, nutritious food",
+        "A temporary shortage of specific food items in retail stores",
+        "Individual dietary preferences influencing food purchasing habits",
+        "Seasonal changes in agricultural production alone"
+      ]
+    },
+    {
+      question:
+        "Which intervention most effectively improves long-term food security in underserved populations?",
+
+      correctAnswer:
+        "Combining food access programs with transportation support and community-based nutrition education",
+
+      options: [
+        "Combining food access programs with transportation support and community-based nutrition education",
+        "Relying only on emergency food distribution services",
+        "Encouraging individuals to independently improve dietary habits",
+        "Increasing availability of processed food options"
+      ]
+    }
+  ]
+};        "A middle-aged client recently released from incarceration in Missouri is attempting to reintegrate into the workforce. They report difficulty securing employment due to background checks and community stigma. The client has a history of alcohol use disorder and limited access to structured recovery programs. Emotional distress has increased due to isolation and lack of social support. They have not yet re-engaged with primary care or behavioral health services."
     },
     {
       id: 5,
