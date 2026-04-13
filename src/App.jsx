@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { module1, module2 } from "./modules.js";
+import { module1, module2 } from "./modules";
 
 /**
  * CERTIFICATE COMPONENT
@@ -13,9 +13,7 @@ function Certificate({ name }) {
 
       <p style={styles.text}>This certifies that</p>
 
-      <h2 style={styles.name}>
-        {name || "Participant"}
-      </h2>
+      <h2 style={styles.name}>{name || "Participant"}</h2>
 
       <p style={styles.text}>
         has successfully completed the CHW Midwest Training Program.
@@ -28,10 +26,10 @@ function Certificate({ name }) {
  * MAIN APP
  */
 export default function App() {
-  const [name] = useState("CHW Learner");
-  const [completed, setCompleted] = useState(false);
   const [view, setView] = useState("home");
   const [selectedModule, setSelectedModule] = useState(null);
+  const [completed, setCompleted] = useState(false);
+  const [name] = useState("CHW Learner");
 
   return (
     <div style={styles.app}>
@@ -54,7 +52,7 @@ export default function App() {
       {/* MODULE LIST */}
       {view === "modules" && (
         <div style={styles.page}>
-          <h2>Select a Module</h2>
+          <h2>Select Module</h2>
 
           <button onClick={() => setSelectedModule(module1)}>
             {module1.title}
@@ -74,13 +72,13 @@ export default function App() {
           <h3>Case Studies</h3>
 
           {selectedModule.caseStudies.map((cs) => (
-            <div key={cs.id} style={styles.caseCard}>
+            <div key={cs.id} style={styles.card}>
               <p>{cs.text}</p>
             </div>
           ))}
 
           <button onClick={() => setCompleted(true)}>
-            Mark Module Complete
+            Mark Complete
           </button>
 
           {completed && (
@@ -122,12 +120,12 @@ const styles = {
     marginTop: "10px"
   },
 
-  caseCard: {
-    border: "1px solid #ccc",
+  card: {
     padding: "15px",
-    marginBottom: "15px",
+    border: "1px solid #ccc",
     borderRadius: "8px",
-    background: "#fafafa"
+    marginBottom: "10px",
+    backgroundColor: "#fafafa"
   },
 
   certificateContainer: {
@@ -139,7 +137,7 @@ const styles = {
   },
 
   certificateTitle: {
-    color: "#000000",
+    color: "#000",
     fontSize: "32px",
     fontWeight: "700",
     marginBottom: "20px"
@@ -153,7 +151,6 @@ const styles = {
 
   text: {
     fontSize: "16px",
-    color: "#333",
-    marginTop: "10px"
+    color: "#333"
   }
 };
