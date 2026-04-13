@@ -1,3 +1,5 @@
+import { TEST_FLAG } from "./modules";
+console.log(TEST_FLAG);
 import { useState } from "react";
 import { module1, module2 } from "./modules.js";
 
