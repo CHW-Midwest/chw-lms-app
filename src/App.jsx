@@ -1,7 +1,8 @@
 import { useState } from "react";
+import { module1, module2 } from "./modules";
 
 /**
- * SIMPLE CERTIFICATE COMPONENT (UPDATED TITLE = BLACK)
+ * CERTIFICATE COMPONENT
  */
 function Certificate({ name }) {
   return (
@@ -10,9 +11,7 @@ function Certificate({ name }) {
         Certificate of Completion
       </h1>
 
-      <p style={styles.text}>
-        This certifies that
-      </p>
+      <p style={styles.text}>This certifies that</p>
 
       <h2 style={styles.name}>
         {name || "Participant"}
@@ -31,16 +30,16 @@ function Certificate({ name }) {
 export default function App() {
   const [name] = useState("CHW Learner");
   const [completed, setCompleted] = useState(false);
-  const [view, setView] = useState("home"); 
-  // home | module | certificate
+  const [view, setView] = useState("home");
+  const [selectedModule, setSelectedModule] = useState(null);
 
   return (
     <div style={styles.app}>
-      
+
       {/* NAV */}
       <nav style={styles.nav}>
         <button onClick={() => setView("home")}>Home</button>
-        <button onClick={() => setView("module")}>Modules</button>
+        <button onClick={() => setView("modules")}>Modules</button>
         <button onClick={() => setView("certificate")}>Certificate</button>
       </nav>
 
@@ -52,12 +51,33 @@ export default function App() {
         </div>
       )}
 
-      {/* MODULE PLACEHOLDER */}
-      {view === "module" && (
+      {/* MODULE LIST */}
+      {view === "modules" && (
         <div style={styles.page}>
-          <h2>Training Modules</h2>
+          <h2>Select a Module</h2>
 
-          <p>Module content goes here...</p>
+          <button onClick={() => setSelectedModule(module1)}>
+            {module1.title}
+          </button>
+
+          <button onClick={() => setSelectedModule(module2)}>
+            {module2.title}
+          </button>
+        </div>
+      )}
+
+      {/* MODULE CONTENT */}
+      {selectedModule && (
+        <div style={styles.page}>
+          <h2>{selectedModule.title}</h2>
+
+          <h3>Case Studies</h3>
+
+          {selectedModule.caseStudies.map((cs) => (
+            <div key={cs.id} style={styles.caseCard}>
+              <p>{cs.text}</p>
+            </div>
+          ))}
 
           <button onClick={() => setCompleted(true)}>
             Mark Module Complete
@@ -98,7 +118,16 @@ const styles = {
   page: {
     padding: "20px",
     border: "1px solid #ddd",
-    borderRadius: "10px"
+    borderRadius: "10px",
+    marginTop: "10px"
+  },
+
+  caseCard: {
+    border: "1px solid #ccc",
+    padding: "15px",
+    marginBottom: "15px",
+    borderRadius: "8px",
+    background: "#fafafa"
   },
 
   certificateContainer: {
@@ -110,7 +139,7 @@ const styles = {
   },
 
   certificateTitle: {
-    color: "#000000",   // ✅ FIXED: BLACK TITLE
+    color: "#000000",
     fontSize: "32px",
     fontWeight: "700",
     marginBottom: "20px"
