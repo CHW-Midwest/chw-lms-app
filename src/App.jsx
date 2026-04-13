@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { module1, module2 } from "./modules";
+import { module1, module2 } from "./modules.js";
 
 /**
  * CERTIFICATE COMPONENT
