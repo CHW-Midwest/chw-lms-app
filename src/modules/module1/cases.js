@@ -1,130 +1,246 @@
-/**
- * CHW MIDWEST LMS MODULES
- * Clean conflict-free version
- */
+export const cases = [
+  // ===== EXISTING 10 =====
+  {
+    id: 1,
+    title: "Substance Use and Housing Instability",
+    scenario:
+      "A client in St. Louis experiencing homelessness reports increased opioid use after losing stable housing.",
+    question: "What is the MOST appropriate first step?",
+    options: [
+      "Refer immediately to inpatient rehab",
+      "Build rapport and assess readiness for change",
+      "Call law enforcement",
+      "Provide shelter list and leave"
+    ],
+    answer: "Build rapport and assess readiness for change",
+    explanation:
+      "Trust-building is essential before intervention. Motivational interviewing improves engagement."
+  },
+  {
+    id: 2,
+    title: "Mental Health Stigma",
+    scenario:
+      "A rural client avoids counseling due to stigma and fear of judgment.",
+    question: "What should the CHW do FIRST?",
+    options: [
+      "Avoid discussing mental health",
+      "Educate on confidentiality and normalize care",
+      "Force referral",
+      "Report refusal"
+    ],
+    answer: "Educate on confidentiality and normalize care",
+    explanation:
+      "Education reduces stigma and builds acceptance of services."
+  },
+  {
+    id: 3,
+    title: "Food Insecurity",
+    scenario:
+      "A diabetic client skips meals due to lack of food access.",
+    question: "Best intervention?",
+    options: [
+      "Tell them to avoid sugar",
+      "Connect to food assistance programs",
+      "Ignore issue",
+      "Recommend expensive meal kits"
+    ],
+    answer: "Connect to food assistance programs",
+    explanation:
+      "Addressing food access improves chronic disease outcomes."
+  },
+  {
+    id: 4,
+    title: "Cultural Food Access",
+    scenario:
+      "A refugee family struggles to find culturally familiar foods.",
+    question: "Most culturally competent response?",
+    options: [
+      "Encourage American diet only",
+      "Help find culturally appropriate food sources",
+      "Ignore preference",
+      "Tell them to adapt"
+    ],
+    answer: "Help find culturally appropriate food sources",
+    explanation:
+      "Respecting cultural food practices supports engagement and nutrition."
+  },
+  {
+    id: 5,
+    title: "Transportation Barriers",
+    scenario:
+      "Client misses appointments due to no transportation.",
+    question: "Best action?",
+    options: [
+      "Discharge client",
+      "Connect to transportation services",
+      "Ignore",
+      "Blame client"
+    ],
+    answer: "Connect to transportation services",
+    explanation:
+      "Transportation is a key social determinant of health."
+  },
 
-export const module1 = {
-  title: "Addiction and Mental Health",
+  // ===== NEW 10 CASES =====
 
-  caseStudies: [
-    {
-      id: 1,
-      text:
-        "A 36-year-old client in St. Louis recently lost employment due to a manufacturing plant closure and has experienced increased alcohol use since. They report disrupted sleep, reduced appetite, and withdrawal from family support systems. The client expresses shame and avoids seeking formal treatment due to stigma in their community. Transportation barriers make it difficult to attend behavioral health appointments consistently. Over time, housing instability has increased stress and worsened mental health symptoms."
-    },
-    {
-      id: 2,
-      text:
-        "A rural Missouri resident began misusing prescription opioids after a workplace injury. The nearest treatment provider is over 50 miles away, creating significant access barriers. Family members report behavioral changes including irritability and social withdrawal. The client is hesitant to seek treatment due to unmanaged chronic pain concerns. Limited local recovery resources further complicate engagement in care."
-    },
-    {
-      id: 3,
-      text:
-        "A pregnant client in Kansas City reports intermittent opioid use and inconsistent prenatal care. She recently relocated and lacks a stable healthcare provider or support system. Fear of legal consequences prevents full disclosure during medical visits. She reports increased anxiety and difficulty maintaining daily routines. Housing instability further limits access to consistent prenatal services."
-    },
-    {
-      id: 4,
-      text:
-        "A formerly incarcerated individual returning to rural Missouri faces challenges securing employment due to background checks and stigma. They have a history of alcohol use disorder and limited access to structured recovery programs. Social isolation and lack of support increase relapse risk. Behavioral health services are scarce in their community. The client has not yet reconnected with primary care services."
-    },
-    {
-      id: 5,
-      text:
-        "A college student in Columbia, Missouri reports increased anxiety and cannabis use related to academic stress. Long wait times for counseling services limit access to mental health support. Academic performance has declined over the semester. The student has withdrawn from social activities and reports sleep disruption. They are unsure how to access off-campus mental health resources."
-    }
-  ],
-
-  questions: [
-    {
-      question:
-        "What is the primary structural factor contributing to increased substance use risk in Missouri communities?",
-
-      correctAnswer:
-        "Combined effects of economic instability, healthcare access barriers, and limited transportation infrastructure",
-
-      options: [
-        "Combined effects of economic instability, healthcare access barriers, and limited transportation infrastructure",
-        "Short-term emotional reactions unrelated to environmental conditions",
-        "Individual lifestyle choices independent of systemic factors",
-        "Seasonal variations in mood without external influence"
-      ]
-    },
-    {
-      question:
-        "What is the most effective CHW approach for supporting co-occurring mental health and substance use conditions?",
-
-      correctAnswer:
-        "Coordinated care addressing behavioral health needs alongside social determinants of health",
-
-      options: [
-        "Coordinated care addressing behavioral health needs alongside social determinants of health",
-        "Focusing only on symptom management without addressing root causes",
-        "Encouraging independent self-management without system support",
-        "Providing general wellness advice without care coordination"
-      ]
-    }
-  ]
-};
-
-export const module2 = {
-  title: "Food Deserts and Nutrition",
-
-  caseStudies: [
-    {
-      id: 1,
-      text:
-        "A family in rural Missouri lives more than 20 miles from the nearest full-service grocery store. They rely heavily on convenience stores for food due to transportation limitations. Fresh produce is rarely available in their immediate community. Children in the household consume mostly processed foods with limited nutrition. The family is unaware of local food assistance programs that could improve access."
-    },
-    {
-      id: 2,
-      text:
-        "An elderly resident in East St. Louis lives on a fixed income and has limited mobility due to chronic health conditions. After a nearby grocery store closed, access to fresh food became significantly more difficult. The individual relies on occasional family support and limited delivery services. Meals on Wheels provides partial assistance but does not fully meet nutritional needs. Over time, the client has experienced fatigue and unintended weight loss."
-    },
-    {
-      id: 3,
-      text:
-        "A single parent in Kansas City works multiple jobs with inconsistent schedules. Due to time constraints, the household relies heavily on fast food and packaged meals. Nutrition education programs are difficult to attend due to scheduling conflicts. Children show early signs of dietary imbalance. SNAP benefits have been applied for but not yet received."
-    },
-    {
-      id: 4,
-      text:
-        "A migrant worker community in Missouri experiences seasonal food insecurity during non-harvest months. Access to culturally familiar foods is limited in local stores. Community members share resources when possible, but supplies are inconsistent. Transportation to larger grocery centers is expensive and unreliable. Nutritional intake declines significantly during off-season periods."
-    },
-    {
-      id: 5,
-      text:
-        "A suburban Missouri neighborhood recently lost its only full-service grocery store due to corporate restructuring. Residents now rely on convenience stores and gas stations for food purchases. Access to fresh produce has decreased significantly. Community health workers have observed rising diet-related health concerns. Local organizations are beginning efforts to improve food access."
-    }
-  ],
-
-  questions: [
-    {
-      question:
-        "What defines a structural food desert in Missouri communities?",
-
-      correctAnswer:
-        "Geographic and economic barriers that limit consistent access to affordable, nutritious food",
-
-      options: [
-        "Geographic and economic barriers that limit consistent access to affordable, nutritious food",
-        "Temporary shortages in grocery store stock levels",
-        "Individual food preferences affecting purchasing decisions",
-        "Seasonal agricultural production changes only"
-      ]
-    },
-    {
-      question:
-        "Which intervention best improves long-term food security in underserved communities?",
-
-      correctAnswer:
-        "Integrated approaches combining food access programs, transportation support, and nutrition education",
-
-      options: [
-        "Integrated approaches combining food access programs, transportation support, and nutrition education",
-        "Reliance solely on emergency food distribution services",
-        "Encouraging individuals to independently change eating habits",
-        "Increasing availability of processed foods in low-income areas"
-      ]
-    }
-  ]
-};
+  {
+    id: 11,
+    title: "Uninsured Client Needs Care",
+    scenario:
+      "A client delays care due to lack of insurance and fear of cost.",
+    question: "What should the CHW do?",
+    options: [
+      "Tell them to wait until insured",
+      "Connect to free/low-cost clinics",
+      "Ignore concern",
+      "Suggest emergency room use only"
+    ],
+    answer: "Connect to free/low-cost clinics",
+    explanation:
+      "CHWs help connect clients to accessible healthcare resources."
+  },
+  {
+    id: 12,
+    title: "Health Literacy Barrier",
+    scenario:
+      "A client misunderstands medication instructions despite nodding.",
+    question: "Best strategy?",
+    options: [
+      "Assume understanding",
+      "Use teach-back method",
+      "Provide more paperwork",
+      "Stop explaining"
+    ],
+    answer: "Use teach-back method",
+    explanation:
+      "Teach-back confirms understanding and improves adherence."
+  },
+  {
+    id: 13,
+    title: "Substance Use Relapse",
+    scenario:
+      "A client relapses after completing treatment.",
+    question: "Best CHW response?",
+    options: [
+      "Label them non-compliant",
+      "Provide support and re-engage services",
+      "Ignore relapse",
+      "Report them"
+    ],
+    answer: "Provide support and re-engage services",
+    explanation:
+      "Relapse is part of recovery; continued support is critical."
+  },
+  {
+    id: 14,
+    title: "Food Desert Access",
+    scenario:
+      "A neighborhood lacks grocery stores with fresh produce.",
+    question: "Best intervention?",
+    options: [
+      "Tell clients to travel farther",
+      "Connect to mobile markets or food programs",
+      "Ignore issue",
+      "Recommend fast food"
+    ],
+    answer: "Connect to mobile markets or food programs",
+    explanation:
+      "Community-based food access solutions improve nutrition."
+  },
+  {
+    id: 15,
+    title: "Client Distrust of System",
+    scenario:
+      "A client distrusts healthcare providers due to past discrimination.",
+    question: "What should the CHW do?",
+    options: [
+      "Dismiss concerns",
+      "Validate experiences and build trust",
+      "Force participation",
+      "Ignore history"
+    ],
+    answer: "Validate experiences and build trust",
+    explanation:
+      "Acknowledging past harm is key to rebuilding trust."
+  },
+  {
+    id: 16,
+    title: "Missed Medication Due to Side Effects",
+    scenario:
+      "Client stops medication due to unpleasant side effects.",
+    question: "Best action?",
+    options: [
+      "Tell them to continue anyway",
+      "Encourage discussion with provider",
+      "Ignore issue",
+      "Stop care"
+    ],
+    answer: "Encourage discussion with provider",
+    explanation:
+      "Providers can adjust medications to improve adherence."
+  },
+  {
+    id: 17,
+    title: "Social Isolation",
+    scenario:
+      "An elderly client reports loneliness and isolation.",
+    question: "Best CHW response?",
+    options: [
+      "Ignore issue",
+      "Connect to community/social programs",
+      "Tell them to stay home",
+      "Focus only on medical care"
+    ],
+    answer: "Connect to community/social programs",
+    explanation:
+      "Social connection improves mental and physical health."
+  },
+  {
+    id: 18,
+    title: "Language Access",
+    scenario:
+      "A patient cannot understand discharge instructions.",
+    question: "Best action?",
+    options: [
+      "Use family member translator",
+      "Use certified interpreter",
+      "Skip instructions",
+      "Speak louder"
+    ],
+    answer: "Use certified interpreter",
+    explanation:
+      "Certified interpreters ensure safe and accurate communication."
+  },
+  {
+    id: 19,
+    title: "Chronic Disease Education",
+    scenario:
+      "A client with hypertension does not understand diet recommendations.",
+    question: "Best strategy?",
+    options: [
+      "Provide complex materials",
+      "Use simple, culturally relevant education",
+      "Ignore",
+      "Blame client"
+    ],
+    answer: "Use simple, culturally relevant education",
+    explanation:
+      "Tailored education improves comprehension and adherence."
+  },
+  {
+    id: 20,
+    title: "Crisis Mental Health",
+    scenario:
+      "A client expresses suicidal thoughts during a visit.",
+    question: "Priority action?",
+    options: [
+      "Ignore statement",
+      "Ensure immediate safety and refer to crisis services",
+      "Wait",
+      "Change topic"
+    ],
+    answer: "Ensure immediate safety and refer to crisis services",
+    explanation:
+      "Immediate safety assessment is critical in crisis situations."
+  }
+];

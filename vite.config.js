@@ -3,5 +3,5 @@ import react from '@vitejs/plugin-react'
 
 export default defineConfig({
   plugins: [react()],
-  base: "/chw-lms-app/",
+  base: '/chw-lms-app/' // 👈 MUST match your repo name
 })
