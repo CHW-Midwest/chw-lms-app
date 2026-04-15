@@ -3,5 +3,13 @@ import react from '@vitejs/plugin-react'
 
 export default defineConfig({
   plugins: [react()],
-  base: '/chw-lms-app/' // 👈 MUST match your repo name
+
+  // IMPORTANT: must match your GitHub repo name
+  base: '/chw-lms-app/',
+
+  build: {
+    outDir: 'dist',
+    emptyOutDir: true,
+    assetsDir: 'assets'
+  }
 })
