@@ -1,278 +1,134 @@
-import { useState, useEffect } from "react";
-import modules from "./modules";
+import { useState, useEffect, useMemo } from "react";
+
+import MissouriMap from "./MissouriMap";
+import RoleSelect from "./RoleSelect";
+import Dashboard from "./Dashboard";
+
+import {
+  initialState,
+  applyIntervention,
+  stepSimulation,
+  forecast
+} from "./simulationEngine";
 
 export default function App() {
-  const [currentModule, setCurrentModule] = useState(null);
-  const [currentCaseIndex, setCurrentCaseIndex] = useState(0);
-  const [score, setScore] = useState(0);
-  const [selectedAnswer, setSelectedAnswer] = useState(null);
-  const [shuffledOptions, setShuffledOptions] = useState([]);
-  const [showCertificate, setShowCertificate] = useState(false);
+  const [state, setState] = useState(initialState);
+  const [role, setRole] = useState("navigator");
+  const [selectedRegion, setSelectedRegion] = useState("stl-metro");
 
-  const currentModuleData =
-    currentModule !== null ? modules[currentModule] : null;
-
-  const currentCase =
-    currentModuleData?.cases?.[currentCaseIndex];
-
-  // Shuffle answers on each new case
+  // 🧪 sanity check
   useEffect(() => {
-    if (currentCase) {
-      setShuffledOptions(
-        [...currentCase.options].sort(() => Math.random() - 0.5)
-      );
-      setSelectedAnswer(null);
-    }
-  }, [currentCaseIndex, currentModule]);
+    const test = structuredClone(initialState);
+    stepSimulation(test);
+    console.log("🧪 Simulation test:", test);
+  }, []);
 
-  const startModule = (index) => {
-    setCurrentModule(index);
-    setCurrentCaseIndex(0);
-    setScore(0);
-    setShowCertificate(false);
+  // ⚡ REAL-TIME SIMULATION LOOP (CDC LIVE MODE)
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setState(prev => {
+        const newState = structuredClone(prev);
+        stepSimulation(newState);
+        return newState;
+      });
+    }, 2000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  // ⏩ manual step
+  const runStep = () => {
+    const newState = structuredClone(state);
+    stepSimulation(newState);
+    setState(newState);
   };
 
-  const goHome = () => {
-    setCurrentModule(null);
-    setCurrentCaseIndex(0);
-    setScore(0);
-    setShowCertificate(false);
-    setSelectedAnswer(null);
+  // 🧩 intervention system
+  const intervene = (action) => {
+    const newState = structuredClone(state);
+    applyIntervention(newState, selectedRegion, action, role);
+    setState(newState);
   };
 
-  const handleAnswer = (answer) => {
-    if (selectedAnswer) return;
+  // 📈 FORECAST (10-step projection)
+  const projection = useMemo(() => {
+    return forecast(state, 10);
+  }, [state]);
 
-    setSelectedAnswer(answer);
+  return (
+    <div style={{ fontFamily: "sans-serif" }}>
+      <h1 style={{ padding: 12 }}>
+        🧬 Epidemiological Simulation Dashboard
+      </h1>
 
-    if (answer === currentCase.correctAnswer) {
-      setScore((prev) => prev + 1);
-    }
-  };
+      {/* 👥 ROLE SYSTEM */}
+      <RoleSelect role={role} setRole={setRole} />
 
-  const nextCase = () => {
-    if (currentCaseIndex + 1 < currentModuleData.cases.length) {
-      setCurrentCaseIndex((prev) => prev + 1);
-    } else {
-      setShowCertificate(true);
-    }
-  };
+      {/* 🗺️ MAP */}
+      <MissouriMap
+        state={state}
+        onSelectRegion={setSelectedRegion}
+      />
 
-  const progress =
-    ((currentCaseIndex + 1) /
-      (currentModuleData?.cases.length || 1)) *
-    100;
+      {/* 🎮 CONTROLS */}
+      <div style={{ padding: 12, display: "flex", gap: 10 }}>
+        <button onClick={() => intervene("education")}>
+          Education
+        </button>
+        <button onClick={() => intervene("treatment")}>
+          Treatment
+        </button>
+        <button onClick={() => intervene("prevention")}>
+          Prevention
+        </button>
+        <button onClick={runStep}>
+          Manual Step ⏩
+        </button>
+      </div>
 
-  // ================= HOME =================
-  if (currentModule === null) {
-    return (
-      <div style={styles.container}>
-        <h1 style={styles.title}>CHW Training LMS</h1>
+      {/* 🏛 POLICY PANEL */}
+      <div style={{ padding: 12, border: "1px solid #ddd" }}>
+        <h3>🏛 Policy Controls (read-only visualized in engine)</h3>
+        <pre>{JSON.stringify(state.policy, null, 2)}</pre>
+      </div>
 
-        <div style={styles.grid}>
-          {modules.map((mod, i) => (
-            <div key={i} style={styles.card}>
-              <h2 style={{ color: "#0b1f3a" }}>{mod.title}</h2>
-              <p>{mod.description}</p>
+      {/* 📊 CDC DASHBOARD */}
+      <Dashboard state={state} />
 
-              <button
-                style={styles.button}
-                onClick={() => startModule(i)}
-              >
-                Start Module
-              </button>
-            </div>
+      {/* 📈 FORECAST PANEL */}
+      <div style={{ margin: 12, padding: 12, border: "1px solid #ccc" }}>
+        <h3>📈 10-Step Forecast (System Risk Projection)</h3>
+
+        <div style={{ display: "flex", alignItems: "flex-end", gap: 4 }}>
+          {projection.map((p, i) => (
+            <div
+              key={i}
+              style={{
+                width: 10,
+                height: p.risk * 100,
+                background:
+                  p.risk > 0.7
+                    ? "red"
+                    : p.risk > 0.4
+                    ? "orange"
+                    : "green"
+              }}
+              title={`Step ${p.step}: ${p.risk.toFixed(2)}`}
+            />
           ))}
         </div>
       </div>
-    );
-  }
 
-  // ================= CERTIFICATE =================
-  if (showCertificate) {
-    return (
-      <div style={styles.container}>
-        <div style={styles.certificate}>
-          <h1 style={{ color: "#0b1f3a" }}>
-            Certificate of Completion
-          </h1>
+      {/* 📍 DEBUG PANEL */}
+      <div style={{ padding: 12 }}>
+        <div><b>Region:</b> {selectedRegion}</div>
+        <div><b>Role:</b> {role}</div>
+        <div><b>Time:</b> {state.time}</div>
 
-          <h2>{currentModuleData.title}</h2>
-
-          <p>
-            Score: <b>{score}</b> /{" "}
-            {currentModuleData.cases.length}
-          </p>
-
-          <button style={styles.button} onClick={goHome}>
-            Back to Home
-          </button>
-        </div>
-      </div>
-    );
-  }
-
-  // ================= CASE SCREEN =================
-  return (
-    <div style={styles.container}>
-      <button onClick={goHome} style={styles.homeBtn}>
-        ← Home
-      </button>
-
-      <h2 style={{ color: "#0b1f3a" }}>
-        {currentModuleData.title}
-      </h2>
-
-      {/* Progress Bar */}
-      <div style={styles.progressBar}>
-        <div
-          style={{
-            ...styles.progressFill,
-            width: `${progress}%`
-          }}
-        />
-      </div>
-
-      <p>
-        Case {currentCaseIndex + 1} of{" "}
-        {currentModuleData.cases.length}
-      </p>
-
-      <div style={styles.card}>
-        <p style={{ lineHeight: "1.6" }}>
-          {currentCase.case}
-        </p>
-
-        {/* ANSWER OPTIONS */}
-        {shuffledOptions.map((opt, i) => {
-          const isCorrect =
-            opt === currentCase.correctAnswer;
-          const isSelected = opt === selectedAnswer;
-
-          return (
-            <button
-              key={i}
-              onClick={() => handleAnswer(opt)}
-              style={{
-                ...styles.option,
-                background:
-                  selectedAnswer
-                    ? isCorrect
-                      ? "#d4edda"
-                      : isSelected
-                      ? "#f8d7da"
-                      : "#f5f5f5"
-                    : "#f5f5f5",
-                color: "#0b1f3a" // NAVY TEXT FIX (IMPORTANT)
-              }}
-            >
-              {opt}
-            </button>
-          );
-        })}
-
-        {/* RATIONALE */}
-        {selectedAnswer && (
-          <div style={styles.rationale}>
-            <strong>Rationale:</strong>{" "}
-            {currentCase.rationale}
-          </div>
-        )}
-
-        {/* NEXT BUTTON */}
-        {selectedAnswer && (
-          <button onClick={nextCase} style={styles.button}>
-            Next Case
-          </button>
-        )}
+        <pre style={{ background: "#f4f4f4", padding: 10 }}>
+          {JSON.stringify(state.regions, null, 2)}
+        </pre>
       </div>
     </div>
   );
 }
-
-// ================= STYLES =================
-
-const styles = {
-  container: {
-    padding: "30px",
-    maxWidth: "850px",
-    margin: "auto",
-    fontFamily: "Arial"
-  },
-
-  title: {
-    textAlign: "center",
-    color: "#0b1f3a"
-  },
-
-  grid: {
-    display: "grid",
-    gridTemplateColumns: "1fr 1fr",
-    gap: "20px"
-  },
-
-  card: {
-    padding: "20px",
-    border: "1px solid #ddd",
-    borderRadius: "10px",
-    background: "#fff"
-  },
-
-  button: {
-    marginTop: "10px",
-    padding: "10px 14px",
-    background: "#0b1f3a",
-    color: "white",
-    border: "none",
-    borderRadius: "6px",
-    cursor: "pointer"
-  },
-
-  homeBtn: {
-    marginBottom: "10px",
-    background: "transparent",
-    border: "none",
-    color: "#0b1f3a",
-    cursor: "pointer"
-  },
-
-  option: {
-    display: "block",
-    width: "100%",
-    margin: "10px 0",
-    padding: "12px",
-    border: "1px solid #ccc",
-    borderRadius: "6px",
-    cursor: "pointer",
-    textAlign: "left",
-    fontWeight: "500"
-  },
-
-  rationale: {
-    marginTop: "12px",
-    padding: "12px",
-    background: "#f9f9f9",
-    borderRadius: "6px"
-  },
-
-  progressBar: {
-    height: "10px",
-    background: "#eee",
-    borderRadius: "5px",
-    margin: "10px 0"
-  },
-
-  progressFill: {
-    height: "100%",
-    background: "#0b1f3a",
-    borderRadius: "5px"
-  },
-
-  certificate: {
-    textAlign: "center",
-    border: "2px solid #0b1f3a",
-    padding: "40px",
-    borderRadius: "10px",
-    background: "white"
-  }
-};
