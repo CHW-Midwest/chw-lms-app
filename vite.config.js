@@ -5,6 +5,6 @@ export default defineConfig({
   plugins: [react()],
   base: "/chw-lms-app/",
   build: {
-    outDir: "docs"
+    outDir: "dist"
   }
 });

@@ -1,125 +1,89 @@
-import { useMemo } from "react";
+import React from "react";
 
-export default function Dashboard({ state }) {
-  const regions = Object.entries(state.regions);
-
-  // 🌍 SYSTEM RISK INDEX
-  const systemRisk = useMemo(() => {
-    return (
-      regions.reduce((sum, [, r]) => sum + r.risk, 0) /
-      regions.length
-    );
-  }, [state]);
-
-  // 🔴 ALERT LEVEL (CDC-style categorization)
-  const alertLevel = useMemo(() => {
-    if (systemRisk > 0.75) return "CRITICAL";
-    if (systemRisk > 0.55) return "HIGH";
-    if (systemRisk > 0.35) return "MODERATE";
-    return "LOW";
-  }, [systemRisk]);
-
-  // 📈 TREND (last snapshots)
-  const trend = useMemo(() => {
-    const history = state.history || [];
-
-    return history.slice(-20).map((snap, i) => {
-      const avg =
-        Object.values(snap.regions).reduce(
-          (a, r) => a + r.risk,
-          0
-        ) / Object.values(snap.regions).length;
-
-      return avg;
-    });
-  }, [state]);
-
-  // 🚨 HOTSPOT detection
-  const hotspots = regions
-    .map(([id, r]) => ({ id, risk: r.risk }))
-    .sort((a, b) => b.risk - a.risk);
-
+export default function Dashboard({ modules, onStartSimulation }) {
   return (
-    <div style={{
-      margin: 12,
-      padding: 16,
-      borderRadius: 12,
-      border: "1px solid #ccc",
-      background: "#fafafa"
-    }}>
+    <div
+      style={{
+        fontFamily: "Arial",
+        padding: "24px",
+        backgroundColor: "#f9fafb",
+        minHeight: "100vh"
+      }}
+    >
       {/* HEADER */}
-      <h2 style={{ marginBottom: 10 }}>
-        🧬 Epidemiological Surveillance Dashboard
-      </h2>
+      <header style={{ marginBottom: "24px" }}>
+        <h1 style={{ fontSize: "28px", marginBottom: "6px" }}>
+          CHW Learning Management System
+        </h1>
+        <p style={{ color: "#555" }}>
+          Community Health Worker Training Modules — Interactive Simulation-Based Learning
+        </p>
+      </header>
 
-      {/* SYSTEM STATUS BAR */}
-      <div style={{
-        display: "flex",
-        justifyContent: "space-between",
-        marginBottom: 12
-      }}>
-        <div>
-          <b>System Risk Index:</b>{" "}
-          {systemRisk.toFixed(3)}
-        </div>
+      {/* MODULE GRID */}
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
+          gap: "16px"
+        }}
+      >
+        {modules.map((mod, i) => (
+          <div
+            key={i}
+            style={{
+              backgroundColor: "#ffffff",
+              border: "1px solid #e5e7eb",
+              borderRadius: "12px",
+              padding: "16px",
+              boxShadow: "0 2px 6px rgba(0,0,0,0.05)"
+            }}
+          >
+            {/* TITLE */}
+            <h2 style={{ fontSize: "18px", marginBottom: "8px" }}>
+              {mod.title}
+            </h2>
 
-        <div style={{
-          fontWeight: "bold",
-          color:
-            alertLevel === "CRITICAL"
-              ? "red"
-              : alertLevel === "HIGH"
-              ? "orange"
-              : "green"
-        }}>
-          ALERT: {alertLevel}
-        </div>
-      </div>
+            {/* DESCRIPTION */}
+            <p style={{ fontSize: "14px", color: "#666", minHeight: "60px" }}>
+              {mod.description}
+            </p>
 
-      {/* HOTSPOTS PANEL */}
-      <div style={{ marginBottom: 12 }}>
-        <b>🚨 Hotspots (Top Regions)</b>
-        <ul>
-          {hotspots.map(h => (
-            <li key={h.id}>
-              {h.id} — {(h.risk * 100).toFixed(1)}%
-            </li>
-          ))}
-        </ul>
-      </div>
+            {/* METRICS */}
+            <div style={{ fontSize: "13px", margin: "10px 0", color: "#333" }}>
+              {mod.cases && (
+                <div>📘 Cases: {mod.cases.length}</div>
+              )}
+              {mod.nodes && (
+                <div>🧠 Nodes: {Object.keys(mod.nodes).length}</div>
+              )}
+            </div>
 
-      {/* TREND PANEL (ASCII EPIDEMIC CURVE) */}
-      <div>
-        <b>📈 Epidemic Curve (System Average Risk)</b>
-
-        <div style={{
-          display: "flex",
-          alignItems: "flex-end",
-          height: 90,
-          gap: 3,
-          marginTop: 8,
-          borderLeft: "2px solid #aaa",
-          borderBottom: "2px solid #aaa",
-          padding: 6
-        }}>
-          {trend.map((t, i) => (
-            <div
-              key={i}
+            {/* BUTTON */}
+            <button
+              onClick={() => onStartSimulation(mod)}
               style={{
-                width: 10,
-                height: t * 90,
-                background:
-                  t > 0.7
-                    ? "red"
-                    : t > 0.4
-                    ? "orange"
-                    : "green"
+                marginTop: "10px",
+                padding: "10px 12px",
+                width: "100%",
+                border: "none",
+                borderRadius: "8px",
+                backgroundColor: "#2563eb",
+                color: "white",
+                cursor: "pointer",
+                fontWeight: "bold"
               }}
-              title={`t=${i}, risk=${t.toFixed(2)}`}
-            />
-          ))}
-        </div>
+            >
+              Start Module
+            </button>
+          </div>
+        ))}
       </div>
+
+      {/* FOOTER */}
+      <footer style={{ marginTop: "40px", fontSize: "12px", color: "#888" }}>
+        CHW LMS • Simulation-Based Training Engine • v1.0
+      </footer>
     </div>
   );
 }

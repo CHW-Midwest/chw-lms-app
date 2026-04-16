@@ -4,9 +4,10 @@ const modules = [
   // =========================
   {
     title: "Module 1: Communication & Engagement",
-    description: "Build trust, active listening, and motivational interviewing skills.",
+    description:
+      "Build trust, active listening, and motivational interviewing skills.",
     cases: Array.from({ length: 20 }, (_, i) => ({
-      case: `Communication scenario ${i + 1}: A client shows hesitation and limited engagement during a CHW interaction.`,
+      case: `Communication scenario ${i + 1}: A client shows hesitation and limited engagement.`,
       options: [
         "Use open-ended questions and reflective listening",
         "Speak faster to finish the session",
@@ -25,15 +26,15 @@ const modules = [
     title: "Module 2: Care Coordination",
     description: "Navigate healthcare systems and social services.",
     cases: Array.from({ length: 20 }, (_, i) => ({
-      case: `Care coordination scenario ${i + 1}: A client faces barriers accessing healthcare and social services.`,
+      case: `Care coordination scenario ${i + 1}: A client faces barriers accessing care.`,
       options: [
-        "Connect client to appropriate community resources",
-        "Tell them to search online independently",
+        "Connect client to community resources",
+        "Tell them to search online alone",
         "Delay action until next visit",
-        "Avoid discussing system barriers"
+        "Avoid system barriers discussion"
       ],
-      correctAnswer: "Connect client to appropriate community resources",
-      rationale: "CHWs help bridge access gaps to essential services."
+      correctAnswer: "Connect client to community resources",
+      rationale: "CHWs bridge access gaps to services."
     }))
   },
 
@@ -42,17 +43,18 @@ const modules = [
   // =========================
   {
     title: "Module 3: Behavioral Health",
-    description: "Support mental health and substance use challenges.",
+    description:
+      "Support mental health and substance use challenges.",
     cases: Array.from({ length: 20 }, (_, i) => ({
-      case: `Behavioral health scenario ${i + 1}: A client shows signs of emotional distress or substance use concerns.`,
+      case: `Behavioral health scenario ${i + 1}: Client shows distress or substance concerns.`,
       options: [
-        "Provide empathetic support and refer to services",
+        "Provide empathetic support and refer services",
         "Ignore emotional concerns",
         "Focus only on physical symptoms",
         "Tell them to handle it alone"
       ],
-      correctAnswer: "Provide empathetic support and refer to services",
-      rationale: "Integrated behavioral support improves outcomes."
+      correctAnswer: "Provide empathetic support and refer services",
+      rationale: "Integrated support improves outcomes."
     }))
   },
 
@@ -61,17 +63,18 @@ const modules = [
   // =========================
   {
     title: "Module 4: Chronic Disease Management",
-    description: "Support long-term health conditions and prevention.",
+    description:
+      "Support long-term health conditions and prevention.",
     cases: Array.from({ length: 20 }, (_, i) => ({
-      case: `Chronic disease scenario ${i + 1}: A client manages diabetes or hypertension with difficulty.`,
+      case: `Chronic disease scenario ${i + 1}: Client managing diabetes or hypertension.`,
       options: [
-        "Support lifestyle changes and medication adherence education",
+        "Support lifestyle and medication adherence",
         "Ignore condition management",
-        "Give medical prescriptions directly",
-        "Avoid follow-up discussions"
+        "Give prescriptions directly",
+        "Avoid follow-up"
       ],
-      correctAnswer: "Support lifestyle changes and medication adherence education",
-      rationale: "CHWs reinforce clinical care through education and support."
+      correctAnswer: "Support lifestyle and medication adherence",
+      rationale: "CHWs reinforce clinical care."
     }))
   },
 
@@ -80,17 +83,18 @@ const modules = [
   // =========================
   {
     title: "Module 5: Cultural Competency & Ethics",
-    description: "Deliver equitable, respectful, and ethical care.",
+    description:
+      "Deliver equitable and respectful care.",
     cases: Array.from({ length: 20 }, (_, i) => ({
-      case: `Cultural competency scenario ${i + 1}: A client has cultural beliefs affecting healthcare decisions.`,
+      case: `Cultural scenario ${i + 1}: Client has cultural beliefs affecting care.`,
       options: [
-        "Respect beliefs while providing accurate information",
-        "Dismiss cultural beliefs",
-        "Force compliance with instructions",
-        "Avoid discussing differences"
+        "Respect beliefs and provide accurate info",
+        "Dismiss beliefs",
+        "Force compliance",
+        "Avoid discussion"
       ],
-      correctAnswer: "Respect beliefs while providing accurate information",
-      rationale: "Cultural humility improves trust and care effectiveness."
+      correctAnswer: "Respect beliefs and provide accurate info",
+      rationale: "Cultural humility builds trust."
     }))
   },
 
@@ -99,114 +103,96 @@ const modules = [
   // =========================
   {
     title: "Module 6: CHW Training Orientation & LMS Guide",
-    description: "How to use this training platform effectively in education settings.",
-    cases: [
-      {
-        case: "How should CHW educators best use this LMS?",
-        options: [
-          "As a structured guided learning tool with discussion",
-          "As a replacement for all field training",
-          "As optional entertainment only",
-          "Without tracking progress"
-        ],
-        correctAnswer: "As a structured guided learning tool with discussion",
-        rationale: "Blended learning strengthens CHW competency."
-      },
-      {
-        case: "A learner struggles with pacing. What should the educator do?",
-        options: [
-          "Break content into smaller sections",
-          "Force faster completion",
-          "Remove learner from program",
-          "Skip difficult content"
-        ],
-        correctAnswer: "Break content into smaller sections",
-        rationale: "Scaffolded learning improves retention."
-      }
-    ].concat(
-      Array.from({ length: 18 }, (_, i) => ({
-        case: `Orientation scenario ${i + 3}: Effective CHW education strategy ${i + 1}.`,
-        options: [
-          "Use guided instruction and reflection",
-          "Avoid structured learning",
-          "Only use testing",
-          "Skip engagement strategies"
-        ],
-        correctAnswer: "Use guided instruction and reflection",
-        rationale: "Structured engagement improves learning outcomes."
-      }))
-    )
+    description:
+      "How to use the LMS effectively in training settings.",
+    cases: Array.from({ length: 20 }, (_, i) => ({
+      case: `Training scenario ${i + 1}: Effective CHW education strategy.`,
+      options: [
+        "Use guided instruction and reflection",
+        "Avoid structured learning",
+        "Only use testing",
+        "Skip engagement strategies"
+      ],
+      correctAnswer: "Use guided instruction and reflection",
+      rationale: "Structured learning improves retention."
+    }))
   },
 
   // =========================
-  // MODULE 7 (GAMIFIED SIMULATION)
+  // MODULE 7 (MAP SIMULATION)
   // =========================
   {
-  title: "Module 7: Missouri Community Health Simulation",
-  description: "Interactive systems simulation: addiction, food deserts, and CHW interventions in real-time.",
-  cases: [
-    {
-      case: "Simulation Start: You enter a St. Louis community with rising overdoses and limited food access. What is your first move?",
-      options: [
-        "Assess community systems and map resources",
-        "Focus on one individual client",
-        "Distribute pamphlets only",
-        "Wait for external referrals"
-      ],
-      correctAnswer: "Assess community systems and map resources",
-      impact: 10,
-      rationale: "System mapping is the foundation of effective CHW intervention."
+  title: "Module 7: Missouri CHW Simulation Game Engine",
+  description:
+    "Interactive systems map with connected regions, CHW interventions, and dynamic outcomes.",
+
+  startNode: "downtown",
+
+  nodes: {
+    downtown: {
+      id: "downtown",
+      name: "Downtown",
+      x: 50,
+      y: 40,
+      connections: ["central", "clinic"],
+
+      state: { overdose: 8, foodAccess: 4, trust: 5 },
+
+      text: "Downtown crisis zone: overdoses rising, low food access.",
+
+      choices: [
+        { text: "Harm Reduction Outreach", next: "central", impact: { overdose: -2, trust: 2 } },
+        { text: "Clinic Referral Only", next: "clinic", impact: { trust: 1 } }
+      ]
     },
-    {
-      case: "Food desert identified. What intervention has highest system impact?",
-      options: [
-        "Mobile grocery + food access programs",
-        "Tell residents to travel farther",
-        "Ignore food access systems",
-        "Focus only on education"
-      ],
-      correctAnswer: "Mobile grocery + food access programs",
-      impact: 15,
-      rationale: "Structural food interventions improve population health."
+
+    clinic: {
+      id: "clinic",
+      name: "Clinic Hub",
+      x: 65,
+      y: 55,
+      connections: ["downtown"],
+
+      state: { overdose: 7, foodAccess: 4, trust: 4 },
+
+      text: "Clinic-only model improves individuals but not systems.",
+
+      choices: [
+        { text: "Return to field outreach", next: "downtown", impact: { trust: 1 } }
+      ]
     },
-    {
-      case: "Overdose rates increase. Best CHW response?",
-      options: [
-        "Harm reduction + treatment linkage",
-        "Punitive enforcement",
-        "Avoid discussion",
-        "Wait for hospitals"
-      ],
-      correctAnswer: "Harm reduction + treatment linkage",
-      impact: 20,
-      rationale: "Harm reduction reduces mortality and improves outcomes."
+
+    central: {
+      id: "central",
+      name: "Central Corridor",
+      x: 70,
+      y: 30,
+      connections: ["downtown", "north"],
+
+      state: { overdose: 6, foodAccess: 6, trust: 7 },
+
+      text: "Central corridor stabilizing due to outreach programs.",
+
+      choices: [
+        { text: "Expand to North County", next: "north", impact: { foodAccess: 2 } }
+      ]
     },
-    {
-      case: "Which combined intervention is strongest?",
-      options: [
-        "Food access + addiction services + transportation support",
-        "Single education campaign",
-        "No intervention",
-        "Isolated services only"
-      ],
-      correctAnswer: "Food access + addiction services + transportation support",
-      impact: 25,
-      rationale: "Multi-system interventions address root causes."
-    },
-    {
-      case: "Community outcomes improving but uneven. Next step?",
-      options: [
-        "Strengthen weak systems",
-        "Stop intervention",
-        "Focus only on food",
-        "Ignore data trends"
-      ],
-      correctAnswer: "Strengthen weak systems",
-      impact: 20,
-      rationale: "Adaptive systems produce sustained improvements."
+
+    north: {
+      id: "north",
+      name: "North County",
+      x: 80,
+      y: 15,
+      connections: ["central"],
+
+      state: { overdose: 4, foodAccess: 7, trust: 9 },
+
+      text: "System-wide improvement achieved.",
+
+      choices: []
     }
-  ]
-    }
+  }
+}
 ];
 
 export default modules;
