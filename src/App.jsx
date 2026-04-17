@@ -1,238 +1,225 @@
-import { useState } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import modules from "./modules";
-import { useSimulationEngine } from "./simulationEngine";
 
-/* =========================
-   DASHBOARD
-   ========================= */
-function Dashboard({ modules, onStart }) {
-  return (
-    <div style={{ padding: 24, fontFamily: "Arial", background: "#f9fafb" }}>
-      <h1>CHW Learning Management System</h1>
-      <p style={{ color: "#666" }}>
-        Interactive Community Health Worker Training Platform
-      </p>
+export default function App() {
+  const [selectedModule, setSelectedModule] = useState(null);
+  const [selectedCaseIndex, setSelectedCaseIndex] = useState(0);
+  const [showFeedback, setShowFeedback] = useState(false);
 
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
-          gap: 16,
-          marginTop: 20
-        }}
-      >
-        {modules.map((mod, i) => (
-          <div
-            key={i}
-            style={{
-              background: "#fff",
-              border: "1px solid #e5e7eb",
-              borderRadius: 12,
-              padding: 16
-            }}
-          >
-            <h3>{mod.title}</h3>
-            <p style={{ fontSize: 14, color: "#666" }}>
-              {mod.description}
-            </p>
+  const [xp, setXp] = useState(0);
+  const [level, setLevel] = useState(1);
+  const [streak, setStreak] = useState(0);
 
-            <button
-              onClick={() => onStart(mod)}
-              style={{
-                marginTop: 10,
-                padding: "10px 12px",
-                width: "100%",
-                background: "#2563eb",
-                color: "white",
-                border: "none",
-                borderRadius: 8,
-                cursor: "pointer"
-              }}
-            >
-              Start Module
-            </button>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
+  const [mapNode, setMapNode] = useState("downtown");
 
-/* =========================
-   MAP GAME (MODULE 7)
-   ========================= */
-function MapGame({ module, onExit }) {
-  const { node, choose, state, reset } = useSimulationEngine(module);
+  const [worldState, setWorldState] = useState({
+    downtown: { name: "Downtown", x: 50, y: 40, overdose: 8, food: 3, trust: 4 },
+    central: { name: "Central Corridor", x: 70, y: 30, overdose: 6, food: 5, trust: 6 },
+    north: { name: "North County", x: 80, y: 15, overdose: 4, food: 7, trust: 8 }
+  });
 
-  const nodes = Object.values(module.nodes);
+  const currentCase = selectedModule?.cases?.[selectedCaseIndex];
+
+  const xpToNextLevel = useMemo(() => level * 100, [level]);
+  const xpPercent = Math.min((xp / xpToNextLevel) * 100, 100);
+
+  const addXP = (amt) => setXp((p) => p + amt);
+
+  const handleAnswer = (opt) => {
+    setShowFeedback(true);
+    const isCorrect = opt === currentCase.correctAnswer;
+
+    if (isCorrect) {
+      addXP(20 + streak * 5);
+      setStreak((s) => s + 1);
+    } else {
+      setStreak(0);
+    }
+  };
+
+  const nextCase = () => {
+    setShowFeedback(false);
+    setSelectedCaseIndex((i) => i + 1);
+  };
+
+  const MAP = worldState;
+
+  const activeNode = MAP?.[mapNode];
+
+  const moveNode = (id) => {
+    setMapNode(id);
+    setWorldState((p) => ({
+      ...p,
+      [id]: {
+        ...p[id],
+        trust: Math.min(10, p[id].trust + 1),
+        overdose: Math.max(0, p[id].overdose - 1)
+      }
+    }));
+  };
 
   return (
-    <div style={{ padding: 24, fontFamily: "Arial" }}>
-      {/* HEADER */}
-      <h2>{module.title}</h2>
-      <p style={{ color: "#666" }}>{module.description}</p>
+    <div className="min-h-screen flex bg-gradient-to-br from-slate-950 via-slate-900 to-black text-white">
 
-      {/* MAP BOARD */}
-      <div
-        style={{
-          position: "relative",
-          width: "100%",
-          height: "420px",
-          background: "#eef2f7",
-          borderRadius: 12,
-          marginTop: 20,
-          marginBottom: 20,
-          overflow: "hidden"
-        }}
-      >
-        {nodes.map((n) => {
-          const isActive = n.id === node.id;
+      {/* ================= SIDEBAR ================= */}
+      <aside className="w-[320px] border-r border-white/10 bg-black/40 backdrop-blur-xl p-5">
 
-          return (
+        <h1 className="text-xl font-bold tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-pink-400">
+          CHW Simulation Engine
+        </h1>
+
+        {/* STATS CARD */}
+        <div className="mt-5 p-4 rounded-2xl bg-white/5 border border-white/10">
+          <div className="text-sm text-white/60">Level</div>
+          <div className="text-2xl font-bold">{level}</div>
+
+          <div className="mt-3 h-2 bg-white/10 rounded-full overflow-hidden">
             <div
-              key={n.id}
-              onClick={() => choose({ next: n.id, impact: {} })}
-              style={{
-                position: "absolute",
-                left: `${n.x}%`,
-                top: `${n.y}%`,
-                transform: "translate(-50%, -50%)",
-                padding: "10px 14px",
-                borderRadius: 20,
-                cursor: "pointer",
-                background: isActive ? "#2563eb" : "#ffffff",
-                color: isActive ? "white" : "black",
-                border: "1px solid #cbd5e1",
-                boxShadow: isActive
-                  ? "0 0 14px rgba(37,99,235,0.6)"
-                  : "0 1px 2px rgba(0,0,0,0.05)"
-              }}
-            >
-              📍 {n.name}
-            </div>
-          );
-        })}
-      </div>
+              className="h-full bg-gradient-to-r from-cyan-400 to-pink-500"
+              style={{ width: `${xpPercent}%` }}
+            />
+          </div>
 
-      {/* NODE INFO PANEL */}
-      <div
-        style={{
-          padding: 16,
-          border: "1px solid #e5e7eb",
-          borderRadius: 12,
-          background: "#fff"
-        }}
-      >
-        <h3>{node.name}</h3>
-        <p>{node.text}</p>
+          <div className="text-xs mt-2 text-white/60">
+            XP: {xp} / {xpToNextLevel}
+          </div>
 
-        {/* ACTIONS */}
-        <div style={{ marginTop: 16 }}>
-          {node.choices.length === 0 && (
-            <div>
-              <h4>🏁 Simulation Complete</h4>
+          <div className="mt-2 text-sm">
+            🔥 Streak: <span className="text-pink-400">{streak}</span>
+          </div>
+        </div>
 
-              <button
-                onClick={reset}
-                style={{ marginRight: 10, padding: 10 }}
-              >
-                Restart
-              </button>
-
-              <button onClick={onExit} style={{ padding: 10 }}>
-                Back to Dashboard
-              </button>
-            </div>
-          )}
-
-          {node.choices.map((c, i) => (
+        {/* MODULE LIST */}
+        <div className="mt-6 space-y-2">
+          {modules.map((m, i) => (
             <button
               key={i}
-              onClick={() => choose(c)}
-              style={{
-                display: "block",
-                width: "100%",
-                marginTop: 10,
-                padding: 12,
-                borderRadius: 8,
-                border: "1px solid #ddd",
-                background: "#fff",
-                cursor: "pointer",
-                textAlign: "left"
+              onClick={() => {
+                setSelectedModule(m);
+                setSelectedCaseIndex(0);
               }}
+              className="w-full text-left p-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 transition"
             >
-              ➤ {c.text}
+              <div className="font-semibold text-sm">{m.title}</div>
+              <div className="text-xs text-white/60 mt-1">
+                {m.description}
+              </div>
             </button>
           ))}
         </div>
-      </div>
+      </aside>
 
-      {/* SYSTEM STATE */}
-      <div
-        style={{
-          marginTop: 20,
-          padding: 16,
-          background: "#111827",
-          color: "white",
-          borderRadius: 12
-        }}
-      >
-        <h4>🌐 Community System State</h4>
-        <div>💊 Overdose Level: {state.overdose}</div>
-        <div>🍎 Food Access: {state.foodAccess}</div>
-        <div>🤝 Community Trust: {state.trust}</div>
-      </div>
+      {/* ================= MAIN ================= */}
+      <main className="flex-1 p-6">
 
-      {/* EXIT */}
-      <button
-        onClick={onExit}
-        style={{
-          marginTop: 20,
-          padding: "10px 14px",
-          borderRadius: 8,
-          border: "none",
-          background: "#ef4444",
-          color: "white",
-          cursor: "pointer"
-        }}
-      >
-        Exit Map
-      </button>
-    </div>
-  );
-}
-
-/* =========================
-   MAIN APP
-   ========================= */
-export default function App() {
-  const [activeModule, setActiveModule] = useState(null);
-
-  const isMapModule = activeModule?.nodes;
-
-  return (
-    <div>
-      {!activeModule && (
-        <Dashboard modules={modules} onStart={setActiveModule} />
-      )}
-
-      {activeModule && isMapModule && (
-        <MapGame
-          module={activeModule}
-          onExit={() => setActiveModule(null)}
-        />
-      )}
-
-      {activeModule && !isMapModule && (
-        <div style={{ padding: 24 }}>
-          <h2>{activeModule.title}</h2>
-          <p>This module is not simulation-enabled yet.</p>
-
-          <button onClick={() => setActiveModule(null)}>
-            Back to Dashboard
-          </button>
+        {/* ================= DASHBOARD HEADER ================= */}
+        <div className="mb-6">
+          <h2 className="text-2xl font-bold text-white/90">
+            Training Dashboard
+          </h2>
+          <p className="text-white/50 text-sm">
+            Interactive CHW Simulation System
+          </p>
         </div>
-      )}
+
+        {/* ================= MAP MODE ================= */}
+        {selectedModule?.title?.includes("Module 7") ? (
+          <div className="relative h-[620px] rounded-2xl border border-white/10 bg-white/5 overflow-hidden">
+
+            <div className="absolute top-4 left-4 text-cyan-300 font-bold">
+              Missouri Systems Map
+            </div>
+
+            {Object.entries(MAP).map(([id, node]) => (
+              <button
+                key={id}
+                onClick={() => moveNode(id)}
+                className="absolute px-3 py-2 rounded-xl text-xs font-semibold bg-cyan-500/30 hover:bg-cyan-400/40 border border-white/10 backdrop-blur"
+                style={{ left: node.x + "%", top: node.y + "%" }}
+              >
+                {node.name}
+              </button>
+            ))}
+
+            {activeNode && (
+              <div className="absolute bottom-0 w-full p-5 bg-black/70 border-t border-white/10">
+
+                <div className="flex justify-between items-center">
+                  <h3 className="text-lg font-bold">{activeNode.name}</h3>
+                  <div className="text-xs text-white/50">
+                    OD {activeNode.overdose} | TR {activeNode.trust}
+                  </div>
+                </div>
+
+                <p className="text-white/60 mt-2 text-sm">
+                  System conditions updating in real-time simulation model.
+                </p>
+
+              </div>
+            )}
+
+          </div>
+
+        ) : !selectedModule ? (
+          <div className="grid place-items-center h-[60vh]">
+            <div className="text-center">
+              <h1 className="text-4xl font-bold bg-gradient-to-r from-cyan-400 via-pink-400 to-purple-500 text-transparent bg-clip-text">
+                CHW Training Simulation
+              </h1>
+              <p className="text-white/50 mt-3">
+                Select a module to begin training
+              </p>
+            </div>
+          </div>
+
+        ) : !currentCase ? (
+          <div className="text-center mt-24 text-white/60">
+            Module Complete ✔
+          </div>
+
+        ) : (
+          <div className="max-w-2xl mx-auto">
+
+            <div className="p-6 rounded-2xl bg-white/5 border border-white/10">
+
+              <div className="text-white/80 mb-4 text-lg">
+                {currentCase.scenario}
+              </div>
+
+              <div className="space-y-3">
+                {currentCase.options.map((opt, i) => (
+                  <button
+                    key={i}
+                    onClick={() => handleAnswer(opt)}
+                    disabled={showFeedback}
+                    className="w-full text-left p-3 rounded-xl bg-white/10 hover:bg-white/20 border border-white/10 transition"
+                  >
+                    {opt}
+                  </button>
+                ))}
+              </div>
+
+              {showFeedback && (
+                <div className="mt-5">
+                  <div className="text-green-300 text-sm mb-3">
+                    {currentCase.rationale}
+                  </div>
+
+                  <button
+                    onClick={nextCase}
+                    className="px-4 py-2 rounded-xl bg-gradient-to-r from-cyan-500 to-pink-500 font-semibold"
+                  >
+                    Next →
+                  </button>
+                </div>
+              )}
+
+            </div>
+
+          </div>
+        )}
+
+      </main>
     </div>
   );
 }
