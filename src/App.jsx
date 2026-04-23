@@ -1,225 +1,457 @@
-import React, { useMemo, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
+import "./App.css";
 import modules from "./modules";
+import GISGameMap from "./GISGameMap";
 
-export default function App() {
-  const [selectedModule, setSelectedModule] = useState(null);
-  const [selectedCaseIndex, setSelectedCaseIndex] = useState(0);
-  const [showFeedback, setShowFeedback] = useState(false);
-
-  const [xp, setXp] = useState(0);
-  const [level, setLevel] = useState(1);
-  const [streak, setStreak] = useState(0);
-
-  const [mapNode, setMapNode] = useState("downtown");
-
-  const [worldState, setWorldState] = useState({
-    downtown: { name: "Downtown", x: 50, y: 40, overdose: 8, food: 3, trust: 4 },
-    central: { name: "Central Corridor", x: 70, y: 30, overdose: 6, food: 5, trust: 6 },
-    north: { name: "North County", x: 80, y: 15, overdose: 4, food: 7, trust: 8 }
-  });
-
-  const currentCase = selectedModule?.cases?.[selectedCaseIndex];
-
-  const xpToNextLevel = useMemo(() => level * 100, [level]);
-  const xpPercent = Math.min((xp / xpToNextLevel) * 100, 100);
-
-  const addXP = (amt) => setXp((p) => p + amt);
-
-  const handleAnswer = (opt) => {
-    setShowFeedback(true);
-    const isCorrect = opt === currentCase.correctAnswer;
-
-    if (isCorrect) {
-      addXP(20 + streak * 5);
-      setStreak((s) => s + 1);
-    } else {
-      setStreak(0);
-    }
-  };
-
-  const nextCase = () => {
-    setShowFeedback(false);
-    setSelectedCaseIndex((i) => i + 1);
-  };
-
-  const MAP = worldState;
-
-  const activeNode = MAP?.[mapNode];
-
-  const moveNode = (id) => {
-    setMapNode(id);
-    setWorldState((p) => ({
-      ...p,
-      [id]: {
-        ...p[id],
-        trust: Math.min(10, p[id].trust + 1),
-        overdose: Math.max(0, p[id].overdose - 1)
-      }
-    }));
+/* ---------------- NAV ---------------- */
+function Nav({ setScreen, resetModule }) {
+  const navBtn = {
+    background: "#ffffff",
+    border: "2px solid #e5e5e5",
+    color: "#000000",
+    fontWeight: "bold",
+    padding: "8px 12px",
+    margin: "5px",
+    cursor: "pointer"
   };
 
   return (
-    <div className="min-h-screen flex bg-gradient-to-br from-slate-950 via-slate-900 to-black text-white">
+    <div className="nav" style={{ textAlign: "center" }}>
+      <button style={navBtn} onClick={() => setScreen("home")}>Dashboard</button>
+      <button style={navBtn} onClick={() => setScreen("background")}>Background</button>
+      <button style={navBtn} onClick={() => { resetModule(); setScreen("modules"); }}>
+        Modules
+      </button>
+      <button style={navBtn} onClick={() => setScreen("gis")}>Community Crisis Simulation</button>
+      <button style={navBtn} onClick={() => setScreen("certificate")}>Certificate</button>
+    </div>
+  );
+}
 
-      {/* ================= SIDEBAR ================= */}
-      <aside className="w-[320px] border-r border-white/10 bg-black/40 backdrop-blur-xl p-5">
+/* ---------------- BUTTONS ---------------- */
+const optionBtn = {
+  background: "#4c1d95",
+  border: "1px solid #6d28d9",
+  color: "#e5e7eb",
+  fontWeight: "500",
+  padding: "10px 14px",
+  cursor: "pointer",
+  display: "block",
+  margin: "8px auto"
+};
 
-        <h1 className="text-xl font-bold tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-pink-400">
-          CHW Simulation Engine
-        </h1>
+const nextBtn = {
+  background: "#e5e7eb",
+  border: "2px solid #9ca3af",
+  color: "#111827",
+  fontWeight: "bold",
+  padding: "10px 14px",
+  cursor: "pointer",
+  display: "block",
+  margin: "10px auto"
+};
 
-        {/* STATS CARD */}
-        <div className="mt-5 p-4 rounded-2xl bg-white/5 border border-white/10">
-          <div className="text-sm text-white/60">Level</div>
-          <div className="text-2xl font-bold">{level}</div>
+const backBtn = {
+  background: "#111827",
+  border: "2px solid #6b7280",
+  color: "#ffffff",
+  fontWeight: "bold",
+  padding: "10px 14px",
+  cursor: "pointer",
+  display: "block",
+  margin: "20px auto"
+};
 
-          <div className="mt-3 h-2 bg-white/10 rounded-full overflow-hidden">
-            <div
-              className="h-full bg-gradient-to-r from-cyan-400 to-pink-500"
-              style={{ width: `${xpPercent}%` }}
-            />
-          </div>
+/* ---------------- NORMALIZE ---------------- */
+const normalizeModule = (m) => ({
+  ...m,
+  caseStudy: m.caseStudy || "Case study not available.",
+  questions: (m.questions || []).map((q) => {
+    const correctIndex = q.correct;
+    return {
+      ...q,
+      correctAnswer: q.options?.[correctIndex],
+      explanation: q.explanations?.[correctIndex],
+      explanationMap: q.explanations || []
+    };
+  })
+});
 
-          <div className="text-xs mt-2 text-white/60">
-            XP: {xp} / {xpToNextLevel}
-          </div>
+/* ---------------- SHUFFLE ---------------- */
+const shuffleArray = (arr) => {
+  const copy = [...arr];
+  for (let i = copy.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [copy[i], copy[j]] = [copy[j], copy[i]];
+  }
+  return copy;
+};
 
-          <div className="mt-2 text-sm">
-            🔥 Streak: <span className="text-pink-400">{streak}</span>
-          </div>
-        </div>
+export default function App() {
+  const [screen, setScreen] = useState("home");
+  const [name, setName] = useState("");
+  const [submittedName, setSubmittedName] = useState(false);
 
-        {/* MODULE LIST */}
-        <div className="mt-6 space-y-2">
-          {modules.map((m, i) => (
-            <button
-              key={i}
-              onClick={() => {
-                setSelectedModule(m);
-                setSelectedCaseIndex(0);
-              }}
-              className="w-full text-left p-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 transition"
-            >
-              <div className="font-semibold text-sm">{m.title}</div>
-              <div className="text-xs text-white/60 mt-1">
-                {m.description}
-              </div>
-            </button>
-          ))}
-        </div>
-      </aside>
+  const [activeModule, setActiveModule] = useState(null);
+  const [questionIndex, setQuestionIndex] = useState(0);
+  const [completed, setCompleted] = useState(false);
 
-      {/* ================= MAIN ================= */}
-      <main className="flex-1 p-6">
+  const [feedback, setFeedback] = useState(null);
+  const [correctCount, setCorrectCount] = useState(0);
 
-        {/* ================= DASHBOARD HEADER ================= */}
-        <div className="mb-6">
-          <h2 className="text-2xl font-bold text-white/90">
-            Training Dashboard
-          </h2>
-          <p className="text-white/50 text-sm">
-            Interactive CHW Simulation System
-          </p>
-        </div>
+  const [moduleScores, setModuleScores] = useState({});
 
-        {/* ================= MAP MODE ================= */}
-        {selectedModule?.title?.includes("Module 7") ? (
-          <div className="relative h-[620px] rounded-2xl border border-white/10 bg-white/5 overflow-hidden">
+  /* ---------------- SHUFFLED OPTIONS ---------------- */
+  const [shuffledOptions, setShuffledOptions] = useState([]);
 
-            <div className="absolute top-4 left-4 text-cyan-300 font-bold">
-              Missouri Systems Map
-            </div>
+  const moduleCases = modules.map(normalizeModule);
+  const active = moduleCases.find((m) => m.id === activeModule);
 
-            {Object.entries(MAP).map(([id, node]) => (
-              <button
-                key={id}
-                onClick={() => moveNode(id)}
-                className="absolute px-3 py-2 rounded-xl text-xs font-semibold bg-cyan-500/30 hover:bg-cyan-400/40 border border-white/10 backdrop-blur"
-                style={{ left: node.x + "%", top: node.y + "%" }}
-              >
-                {node.name}
+  /* ---------------- RANDOMIZE OPTIONS PER QUESTION ---------------- */
+  useEffect(() => {
+    if (activeModule && active?.questions?.[questionIndex]) {
+      const q = active.questions[questionIndex];
+      setShuffledOptions(shuffleArray(q.options));
+    }
+  }, [activeModule, questionIndex]);
+
+  const resetModule = () => {
+    setActiveModule(null);
+    setQuestionIndex(0);
+    setFeedback(null);
+    setCompleted(false);
+    setShuffledOptions([]);
+  };
+
+  const totalQuestions = active?.questions?.length || 0;
+  const scorePercent =
+    totalQuestions > 0 ? Math.round((correctCount / totalQuestions) * 100) : 0;
+
+  const passed = scorePercent >= 80;
+
+  /* ---------------- HOME ---------------- */
+  if (screen === "home") {
+    return (
+      <div className="app-shell">
+        <Nav setScreen={setScreen} resetModule={resetModule} />
+
+        <div style={{ textAlign: "center", marginTop: "60px" }}>
+          <h1 style={{ fontSize: "3.2rem" }}>
+            Missouri Community Health Workers Learning System
+          </h1>
+
+          {!submittedName ? (
+            <div className="card" style={{ width: "520px", margin: "0 auto" }}>
+              <h2>Enter Your Name</h2>
+
+              <input
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Full Name"
+                style={{ width: "100%", padding: "10px" }}
+              />
+
+              <button style={optionBtn} onClick={() => setSubmittedName(true)}>
+                Start Learning Path
               </button>
-            ))}
-
-            {activeNode && (
-              <div className="absolute bottom-0 w-full p-5 bg-black/70 border-t border-white/10">
-
-                <div className="flex justify-between items-center">
-                  <h3 className="text-lg font-bold">{activeNode.name}</h3>
-                  <div className="text-xs text-white/50">
-                    OD {activeNode.overdose} | TR {activeNode.trust}
-                  </div>
-                </div>
-
-                <p className="text-white/60 mt-2 text-sm">
-                  System conditions updating in real-time simulation model.
-                </p>
-
-              </div>
-            )}
-
-          </div>
-
-        ) : !selectedModule ? (
-          <div className="grid place-items-center h-[60vh]">
-            <div className="text-center">
-              <h1 className="text-4xl font-bold bg-gradient-to-r from-cyan-400 via-pink-400 to-purple-500 text-transparent bg-clip-text">
-                CHW Training Simulation
-              </h1>
-              <p className="text-white/50 mt-3">
-                Select a module to begin training
-              </p>
             </div>
-          </div>
+          ) : (
+            <>
+              <h2>Welcome, {name}</h2>
 
-        ) : !currentCase ? (
-          <div className="text-center mt-24 text-white/60">
-            Module Complete ✔
-          </div>
-
-        ) : (
-          <div className="max-w-2xl mx-auto">
-
-            <div className="p-6 rounded-2xl bg-white/5 border border-white/10">
-
-              <div className="text-white/80 mb-4 text-lg">
-                {currentCase.scenario}
+              <div className="card" style={{ maxWidth: "650px", margin: "0 auto" }}>
+                <h3>Learning Path Instructions</h3>
+                <p>1. Review Background information in full detail.</p>
+                <p>2. Complete all modules in sequence.</p>
+                <p>3. Analyze each case study carefully.</p>
+                <p>4. Select answers and review explanations.</p>
+                <p>5. Achieve ≥80% for CE completion.</p>
+                <p>6. Play the simulation for an interactive way to see how actions impact community. </p>
               </div>
 
-              <div className="space-y-3">
-                {currentCase.options.map((opt, i) => (
+              <button style={optionBtn} onClick={() => setScreen("background")}>
+                Enter Learning Path
+              </button>
+            </>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  /* ---------------- BACKGROUND ---------------- */
+if (screen === "background") {
+  return (
+    <div className="app-shell">
+      <Nav setScreen={setScreen} resetModule={resetModule} />
+
+      <h2 style={{ textAlign: "center" }}>
+        CHW Health Learning Focus:
+      </h2>
+
+      <div
+        className="grid"
+        style={{
+          maxWidth: "1000px",
+          margin: "0 auto",
+          display: "grid",
+          gridTemplateColumns: "1fr 1fr",
+          gap: "15px"
+        }}
+      >
+        <div className="background-readonly" style={{ pointerEvents: "auto" }}>
+          <h3>Addiction</h3>
+          <p>Opioid and substance use disorder burden in Missouri.</p>
+          <p>Rural areas face limited treatment access.</p>
+
+          <p><strong>Resources:</strong></p>
+          <a
+            href="https://health.mo.gov/living/families/more/"
+            target="_blank"
+            rel="noreferrer"
+            style={{ color: "#2563eb", textDecoration: "underline" }}
+          >
+            Missouri Substance Use & Addiction Data →
+          </a>
+        </div>
+
+        <div className="background-readonly" style={{ pointerEvents: "auto" }}>
+          <h3>Mental Health</h3>
+          <p>Psychiatric illness impacts statewide health outcomes.</p>
+          <p>Provider shortages remain critical.</p>
+
+          <p><strong>Resources:</strong></p>
+          <a
+            href="https://dmh.mo.gov/"
+            target="_blank"
+            rel="noreferrer"
+            style={{ color: "#2563eb", textDecoration: "underline" }}
+          >
+            Missouri Department of Mental Health →
+          </a>
+        </div>
+
+        <div className="background-readonly" style={{ pointerEvents: "auto" }}>
+          <h3>Food Deserts</h3>
+          <p>Limited access to healthy foods in urban and rural Missouri.</p>
+          <p>Transportation barriers increase disparities.</p>
+
+          <p><strong>Resources:</strong></p>
+          <a
+            href="https://foodsecurity.missouri.edu/wp-content/uploads/2025/07/Missouri-Hunger-Atlas-2025_Final.pdf"
+            target="_blank"
+            rel="noreferrer"
+            style={{ color: "#2563eb", textDecoration: "underline" }}
+          >
+            Missouri Hunger Atlas 2025 →
+          </a>
+        </div>
+
+        <div className="background-readonly" style={{ pointerEvents: "auto" }}>
+          <h3>Social Determinants</h3>
+          <p>Income, housing, and education shape health outcomes.</p>
+          <p>Missouri disparities persist across counties.</p>
+
+          <p><strong>Resources:</strong></p>
+          <a
+            href="https://www.cdc.gov/about/priorities/social-determinants-of-health-at-cdc.html?CDC_AAref_Val=https://www.cdc.gov/about/sdoh/index.html"
+            target="_blank"
+            rel="noreferrer"
+            style={{ color: "#2563eb", textDecoration: "underline" }}
+          >
+            CDC Social Determinants of Health →
+          </a>
+        </div>
+      </div>
+
+      <button style={optionBtn} onClick={() => setScreen("modules")}>
+        Continue to Modules
+      </button>
+    </div>
+  );
+}
+
+  /* ---------------- MODULES ---------------- */
+  if (screen === "modules") {
+    return (
+      <div className="app-shell">
+        <Nav setScreen={setScreen} resetModule={resetModule} />
+
+        <h2 style={{ textAlign: "center" }}>Training Modules</h2>
+
+        {!activeModule ? (
+          <div className="grid">
+            {moduleCases.map((m) => {
+              const isCompleted = (moduleScores[m.id] || 0) >= 80;
+
+              return (
+                <div
+                  key={m.id}
+                  className="card"
+                  style={{ cursor: "pointer", textAlign: "center" }}
+                  onClick={() => {
+                    setActiveModule(m.id);
+                    setQuestionIndex(0);
+                    setCorrectCount(0);
+                    setCompleted(false);
+                  }}
+                >
+                  <h3>
+                    Module {m.id} {isCompleted ? "✔ Completed" : ""}
+                  </h3>
+                  <p>{m.caseStudy}</p>
+                </div>
+              );
+            })}
+          </div>
+        ) : (
+          <div className="card" style={{ textAlign: "center" }}>
+            <h2>Module {active.id}</h2>
+
+            <p style={{ fontSize: "1.35rem", fontWeight: "500" }}>
+              {active.caseStudy}
+            </p>
+
+            {!completed && (
+              <>
+                <h3>Question {questionIndex + 1}</h3>
+
+                <p>{active.questions[questionIndex]?.question}</p>
+
+                {shuffledOptions.map((opt, i) => (
                   <button
                     key={i}
-                    onClick={() => handleAnswer(opt)}
-                    disabled={showFeedback}
-                    className="w-full text-left p-3 rounded-xl bg-white/10 hover:bg-white/20 border border-white/10 transition"
+                    style={optionBtn}
+                    onClick={() => {
+                      const q = active.questions[questionIndex];
+                      const isCorrect = opt === q.correctAnswer;
+
+                      const originalIndex = q.options.indexOf(opt);
+
+                      setFeedback({
+                        text: isCorrect ? "Correct" : "Incorrect",
+                        explanation: q.explanationMap?.[originalIndex]
+                      });
+
+                      if (isCorrect) setCorrectCount((p) => p + 1);
+                    }}
                   >
                     {opt}
                   </button>
                 ))}
-              </div>
 
-              {showFeedback && (
-                <div className="mt-5">
-                  <div className="text-green-300 text-sm mb-3">
-                    {currentCase.rationale}
+                {feedback && (
+                  <div className="feedback">
+                    <strong>{feedback.text}</strong>
+                    <p>{feedback.explanation}</p>
                   </div>
+                )}
 
-                  <button
-                    onClick={nextCase}
-                    className="px-4 py-2 rounded-xl bg-gradient-to-r from-cyan-500 to-pink-500 font-semibold"
-                  >
-                    Next →
-                  </button>
-                </div>
-              )}
+                <button
+                  style={nextBtn}
+                  onClick={() => {
+                    if (questionIndex < active.questions.length - 1) {
+                      setQuestionIndex((p) => p + 1);
+                      setFeedback(null);
+                    } else {
+                      setCompleted(true);
+                      setModuleScores((prev) => ({
+                        ...prev,
+                        [active.id]: scorePercent
+                      }));
+                    }
+                  }}
+                >
+                  {questionIndex === active.questions.length - 1
+                    ? "Finish Module"
+                    : "Next Question"}
+                </button>
+              </>
+            )}
 
-            </div>
+            {completed && (
+              <div className="card">
+                <h3>Module Score: {scorePercent}%</h3>
+                <p>{passed ? "PASS" : "FAIL"}</p>
+              </div>
+            )}
 
+            <button style={backBtn} onClick={resetModule}>
+              Back to Modules
+            </button>
           </div>
         )}
+      </div>
+    );
+  }
 
-      </main>
-    </div>
-  );
+  /* ---------------- GIS ---------------- */
+  if (screen === "gis") {
+    return (
+      <div className="app-shell">
+        <Nav setScreen={setScreen} resetModule={resetModule} />
+
+        <div style={{ minHeight: "80vh", padding: "20px" }}>
+          {GISGameMap ? (
+            <GISGameMap onBack={() => setScreen("home")} />
+          ) : (
+            <div style={{ textAlign: "center", marginTop: "40px" }}>
+              <h2 style={{ color: "red" }}>GIS MODULE FAILED TO LOAD</h2>
+              <p>Check GISGameMap import or export.</p>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  /* ---------------- CERTIFICATE ---------------- */
+  if (screen === "certificate") {
+    const userName = name || "User";
+
+    const allPassed =
+      moduleCases.length > 0 &&
+      moduleCases.every((m) => (moduleScores[m.id] || 0) >= 80);
+
+    if (!allPassed) {
+      return (
+        <div className="app-shell">
+          <Nav setScreen={setScreen} resetModule={resetModule} />
+          <h2 style={{ textAlign: "center" }}>
+            Complete all modules with ≥80% to unlock certificate.
+          </h2>
+        </div>
+      );
+    }
+
+    return (
+      <div className="app-shell">
+        <Nav setScreen={setScreen} resetModule={resetModule} />
+
+        <div style={{ textAlign: "center", marginTop: "80px" }}>
+          <h1>Completion Certificate</h1>
+
+          <div className="card" style={{ maxWidth: "800px", margin: "0 auto" }}>
+            <p style={{ fontSize: "1.2rem", lineHeight: "1.8" }}>
+              <strong>
+                {userName} has completed learning modules for CHW Learning in the
+                following high interest areas: Addiction, Mental Health, Food
+                Deserts and Social Determinants of Health.
+              </strong>
+            </p>
+
+            <p style={{ fontSize: "1.2rem" }}>
+              They have successfully completed <strong>3.0 CE credit hours</strong>.
+            </p>
+
+            <p style={{ fontSize: "1.2rem" }}>
+              This certificate shall act as documentation for the state's Credentialing Board.
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return null;
 }

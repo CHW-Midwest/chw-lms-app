@@ -1,24 +1,154 @@
-.certificate-container {
-  text-align: center;
-  padding: 40px;
-  background: white;
+/**************** GLOBAL ****************/
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+  font-family: system-ui, -apple-system, sans-serif;
+  background: radial-gradient(circle at top, #1a1a2e, #0a0a12);
+  color: #ffffff;
 }
 
-.certificate-title {
-  color: #000000;
-  font-size: 32px;
-  font-weight: 700;
+.app-shell {
+  padding: 24px;
+}
+
+/**************** NAV ****************/
+.nav {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
   margin-bottom: 20px;
 }
 
-.certificate-name {
-  font-size: 26px;
-  font-weight: 600;
-  margin-top: 20px;
+.nav button {
+  background: linear-gradient(135deg, #2a2a40, #1f1f33);
+  border: 1px solid #3d3d66;
+  color: white;
+  padding: 10px 16px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: 0.25s;
 }
 
-.certificate-text {
-  font-size: 16px;
-  margin-top: 10px;
-  color: #333;
+.nav button:hover {
+  transform: translateY(-2px);
+  border-color: #6c5ce7;
+}
+
+/**************** CARDS ****************/
+.card {
+  background: linear-gradient(145deg, #1e1e2f, #151520);
+  border: 1px solid #2d2d44;
+  padding: 18px;
+  border-radius: 16px;
+  margin: 10px;
+  transition: 0.25s;
+}
+
+.card:hover {
+  transform: translateY(-3px);
+  border-color: #6c5ce7;
+}
+
+/**************** GRID ****************/
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 14px;
+}
+
+/**************** DEFAULT BUTTON (GLOBAL) ****************/
+button {
+  background: #2d2d44;
+  border: none;
+  color: white;
+  padding: 11px 16px;
+  border-radius: 14px;
+  cursor: pointer;
+  transition: 0.2s;
+  font-weight: 600;
+  pointer-events: auto; /* ✅ FIX: ensures clickability globally */
+}
+
+button:hover {
+  transform: scale(1.03);
+}
+
+/**************** OPTIONS (ANSWER BUTTONS) ****************/
+.options {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+/* ✅ FIXED ANSWER BUTTONS */
+.options button {
+  background: #6d28d9;
+  border: 2px solid #a78bfa;
+  color: #ffffff;
+  font-weight: 600;
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+/**************** MODULE ACTIONS ****************/
+.module-actions {
+  margin-top: 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+
+.module-actions button:nth-child(1) {
+  background: #df7044;
+  min-width: 220px;
+}
+
+.module-actions button:nth-child(2) {
+  background: #036428;
+  min-width: 220px;
+}
+
+.module-actions button:nth-child(3) {
+  background: #df7044;
+  min-width: 220px;
+}
+
+/**************** BACKGROUND CARDS ****************/
+.background-card {
+  background: linear-gradient(135deg, #161625, #1a1a2f);
+  border: 1px solid #2c2c4a;
+  padding: 18px;
+  border-radius: 16px;
+}
+
+/**************** BACKGROUND READ ONLY ****************/
+.background-readonly {
+  background: linear-gradient(135deg, #161625, #1a1a2f);
+  border: 1px solid #2c2c4a;
+  padding: 18px;
+  border-radius: 16px;
+  pointer-events: none;
+}
+
+/**************** HEADINGS ****************/
+h2 {
+  text-align: center;
+  margin-bottom: 10px;
+  color: #dfe6e9;
+}
+
+p {
+  color: #cfcff1;
+}
+
+/**************** SCORE ****************/
+.score {
+  text-align: center;
+  margin: 10px 0 20px;
+  font-weight: bold;
+  color: #a29bfe;
 }
